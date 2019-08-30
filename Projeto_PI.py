@@ -1,4 +1,3 @@
-from __future__ import print_function
 from cv2 import *
 import pyzbar.pyzbar as pyzbar
 import numpy as np
@@ -65,6 +64,9 @@ while success:
     for obj in decodedObjects:
         print('Type : ', obj.type)
         print('Data : ', obj.data,'\n')
-
+    '''
+    if(len(decodedObjects) > 0):
+        break
+    '''
     if cv2.waitKey(10) == 27: # ESC para sair
         break
