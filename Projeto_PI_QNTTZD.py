@@ -5,6 +5,7 @@ import numpy as np
 
 W_NAME_FRM = 'Frame'
 W_NAME_ROI = 'ROI'
+W_NAME_ROI_QNT = 'ROI QUANTITIZADA'
 
 BORDA = 5
 LINHA = 1
@@ -56,11 +57,33 @@ while success:
 
     # Mostrar o video inteiro
     imshow(W_NAME_FRM, image)
-    #Mostra a ROI
+    # Mostra a ROI
     imshow(W_NAME_ROI , imgROI)
 
+    # -------------------------------------------------- #
+    #    RETIRADO DO EXEMPLO DA DOCUMENTAÇAO DO OPENCV   #
+    # -------------------------------------------------- #
+    img = imgROI.copy()
+    Z = img.reshape((-1,3))
+
+    # convert to np.float32
+    Z = np.float32(Z)
+
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    K = 8
+    ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+
+    # Now convert back into uint8, and make original image
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((img.shape))
+    # -------------------------------------------------- #
+    # Mostra a ROI - Quantitizada
+    imshow(W_NAME_ROI_QNT , res2)
+
     # Decodificar os codigos de barras
-    decodedObjects = pyzbar.decode(imgROI)
+    decodedObjects = pyzbar.decode(res2)
 
     for obj in decodedObjects:
         print('Type : ', obj.type)
